@@ -6,13 +6,14 @@ const mongoose= require("mongoose");
 const MONGODB_URL= "mongodb://127.0.0.1:27017/wanderlust";
 const Listing= require("./models/listing.js")
 const methodOverride= require("method-override");
+const ejsMate= require("ejs-mate");
 
 app.set("view engine" , "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({extended: true}));
-app.use(express.static(path.join(__dirname, "public")));
 app.use(methodOverride("_method"));
-
+app.engine('ejs', ejsMate);
+app.use(express.static(path.join(__dirname, "public")));
 
 main().then(()=>console.log("MongoDB Successfully Connected...")).catch(error=>console.log(error));
 async function main(){
