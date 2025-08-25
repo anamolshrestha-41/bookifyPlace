@@ -11,7 +11,7 @@
           <div class="listing-body">
             <h5 class="listing-title"><%= list.title %></h5>
             <p class="listing-desc"><%= list.description %></p>
-            <p class="listing-price"><strong>Price:</strong> <%= list.price.toLocaleString("en-NP") %> /night</p>
+            <p class="listing-price"><strong>Price:</strong> Rs<%= list.price.toLocaleString("en-NP") %> /night</p>
             <p class="listing-location"><strong>Location:</strong> <%= list.location %>, <%= list.country %></p>
             <a href="/listings/<%= list._id %>" class="btn-view">View Details</a>
           </div>
