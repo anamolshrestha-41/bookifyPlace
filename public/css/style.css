@@ -1,3 +1,19 @@
-body{
+/* body{
     background-color: aqua;
+} */
+
+.navbar{
+    height: 5rem;
+    background-color: white;
+}
+
+.fa-compass-drafting{
+    color: #fe424d;
+    font-size: 2rem;
+}
+
+/* We use important to make the dedicated thing important (priority) */
+
+.nav-link{
+    color: #222222 !important;
 }
