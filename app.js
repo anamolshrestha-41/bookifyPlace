@@ -22,7 +22,7 @@ async function main(){
 
 //checking..
 app.get("/", (req, res)=>{
-    res.send("Working well...");
+    res.redirect("/listings");
 })
 // app.get("/testListing", async(req, res)=>{
 //     let sampleListing= new Listing({

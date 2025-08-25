@@ -1,19 +1,274 @@
-/* body{
-    background-color: aqua;
-} */
-
-.navbar{
-    height: 5rem;
-    background-color: white;
+/* Reset & Base */
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #fafafa;
+  color: #333;
 }
 
-.fa-compass-drafting{
-    color: #fe424d;
-    font-size: 2rem;
+/* Navbar */
+/* Navbar Styling */
+.navbar {
+  background-color: #fff;
+  border-bottom: 1px solid #e6e6e6;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* We use important to make the dedicated thing important (priority) */
+.navbar-brand i {
+  color: #ff385c;
+  font-size: 2rem;
+  transition: transform 0.2s ease;
+}
 
-.nav-link{
-    color: #222222 !important;
+.navbar-brand i:hover {
+  transform: rotate(-10deg);
+}
+
+.navbar-nav .nav-link {
+  color: #222 !important;
+  font-weight: 500;
+  margin-left: 1rem;
+  transition: color 0.2s ease, background 0.2s ease;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: rgba(255,56,92,0.1);
+  color: #ff385c !important;
+}
+
+.navbar-nav .nav-link.active {
+  color: #ff385c !important;
+  font-weight: 600;
+}
+
+.navbar-toggler {
+  border-color: #ddd;
+}
+
+/* Footer */
+.f-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: space-evenly;
+  text-align: center;
+  height: 8rem;
+  background-color: #ebebeb;
+}
+
+.f-info-links,
+.f-info-socials,
+.f-info-brand {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.f-info-links a {
+  text-decoration: none;
+  color: #222;
+  margin: 0 8px;
+}
+
+.f-info-links a:hover {
+  text-decoration: underline;
+}
+
+.f-info-socials i {
+  color: #222;
+  font-size: 1.2rem;
+  margin-right: 1rem;
+}
+
+/* Page Titles */
+.page-title,
+.form-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 20px;
+}
+
+/* General Card */
+.listing-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.listing-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+/* Listings Grid */
+.listings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Images */
+.listing-img,
+.details-img {
+  width: 100%;
+  object-fit: cover;
+  border-bottom: 1px solid #eee;
+}
+
+.listing-img {
+  height: 180px;
+}
+
+.details-img {
+  height: 320px;
+}
+
+/* Card Body */
+.listing-body,
+.details-body {
+  padding: 16px 20px;
+}
+
+.listing-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+.listing-desc {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 12px;
+  height: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listing-price,
+.listing-location,
+.details-location,
+.details-price {
+  font-size: 0.95rem;
+  margin: 4px 0;
+}
+
+.details-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 6px;
+}
+
+.details-desc {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 16px;
+}
+
+.details-price {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 20px;
+}
+
+/* Buttons */
+.btn-view,
+.btn-edit,
+.btn-submit {
+  display: inline-block;
+  background: #ff385c;
+  color: #fff;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border: none;
+}
+
+.btn-view:hover,
+.btn-edit:hover,
+.btn-submit:hover {
+  background: #e31c5f;
+}
+
+.btn-delete {
+  background: #fff;
+  color: #ff385c;
+  border: 1px solid #ff385c;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-delete:hover {
+  background: #ff385c;
+  color: #fff;
+}
+
+/* Edit & New Forms */
+.edit-form,
+.listing-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.form-input,
+.form-textarea {
+  padding: 12px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: #ff385c;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255,56,92,0.2);
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Details Page Actions */
+.details-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
