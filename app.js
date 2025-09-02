@@ -7,6 +7,8 @@ const MONGODB_URL= "mongodb://127.0.0.1:27017/wanderlust";
 const Listing= require("./models/listing.js")
 const methodOverride= require("method-override");
 const ejsMate= require("ejs-mate");
+const wrapAsync=require("./utils/wrapAsync.js")
+const ExpressError=require("./utils/ExpressError.js");
 
 app.set("view engine" , "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -38,12 +40,10 @@ app.get("/", (req, res)=>{
 // })
 
 //home.ejs : INDEX ROUTE
-app.get("/listings", async(req, res)=>{
+app.get("/listings", wrapAsync(async(req, res)=>{
    let allListings = await Listing.find({});
    res.render("listings/home.ejs", {allListings});
-})
-
-
+}));
 
 //CREATE
 //new.ejs: Form to create things...
@@ -51,8 +51,30 @@ app.get("/listings/new", (req, res)=>{
     res.render("listings/new.ejs");
 })
 //POST creation!
-app.post("/listings", async(req, res)=>{
-    let {title, description, price, image, location, country}= req.body;
+// app.post("/listings", async(req, res, next)=>{
+//     try{
+//         let {title, description, price, image, location, country}= req.body;
+//     let newListing= new Listing({
+//         title: title,
+//         description: description,
+//         price: price,
+//         image: image,
+//         location: location,
+//         country: country
+//     });
+//   await newListing.save();
+//   res.redirect("/listings");
+//     }
+//     catch(err){
+//         next(err);
+//     }
+// }) 
+//or
+app.post("/listings", wrapAsync(async (req, res, next)=>{
+        let {title, description, price, image, location, country}= req.body;
+        if(!req.body){
+            throw new ExpressError(400, "Send valid data, ~BAD REQUEST!~")
+        }
     let newListing= new Listing({
         title: title,
         description: description,
@@ -63,36 +85,48 @@ app.post("/listings", async(req, res)=>{
     });
   await newListing.save();
   res.redirect("/listings");
-})
+}
+));
 
 //see.ejs  : SHOW ROUTE (WE USE IT FOR EVERY CRUD's..)
-app.get("/listings/:id", async(req, res)=>{
+app.get("/listings/:id", wrapAsync(async(req, res)=>{
     let {id} = req.params;
     const listing= await Listing.findById(id);
     res.render("listings/see.ejs", {listing});
-})
+}));
 
 
 // UPDATION
 // edit.ejs : Form to update things...
-app.get("/listings/:id/edit", async(req, res)=>{
+app.get("/listings/:id/edit", wrapAsync(async(req, res)=>{
     let {id}= req.params;
     let listing= await Listing.findById(id);
     res.render("listings/edit.ejs", {listing} );
-})
+}));
 //update
-app.put("/listings/:id", async(req,res)=>{
+app.put("/listings/:id", wrapAsync(async(req,res)=>{
     let {id}= req.params;
     await Listing.findByIdAndUpdate(id, {...req.body.listing});
     res.redirect(`/listings/${id}`);
-})
+}));
 
 //delete
-app.delete("/listings/:id", async(req, res)=>{
+app.delete("/listings/:id", wrapAsync(async(req, res)=>{
     let { id }= req.params;
     await Listing.findByIdAndDelete(id);
    res.redirect("/listings");
-})
+}));
+
+app.all("*", (req, res, next) => {
+    next(new ExpressError(404, "Page Not Found!"));
+});
+
+
+app.use((err, req, res, next)=>{
+    let {statusCode=500, message="Something went wrong!"}=err;
+    res.render("error.ejs", {err});
+    // res.status(statusCode).send(message);
+});
 
 app.listen(port, ()=>{
     console.log(`Server is running on port number ${port}..`);
