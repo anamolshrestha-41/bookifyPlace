@@ -27,7 +27,7 @@ const validateListing=(req, res, next)=>{
  let {error}=ListingSchema.validate(req.body);
  if(error) {
     let errMsg= error.details.map ((element)=>element.message).join(",");
-    throw new ExpressError(404, errMsg);
+    throw new ExpressError(404, error);
  }  
  else{
     next();
@@ -106,7 +106,7 @@ app.post("/listings", validateListing, wrapAsync(async (req, res, next)=>{
 ));
 
 //see.ejs  : SHOW ROUTE (WE USE IT FOR EVERY CRUD's..)
-app.get("/listings/:id", validateListing, wrapAsync(async(req, res)=>{
+app.get("/listings/:id", wrapAsync(async(req, res)=>{
     let {id} = req.params;
     const listing= await Listing.findById(id);
     res.render("listings/see.ejs", {listing});
