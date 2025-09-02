@@ -9,6 +9,7 @@ const methodOverride= require("method-override");
 const ejsMate= require("ejs-mate");
 const wrapAsync=require("./utils/wrapAsync.js")
 const ExpressError=require("./utils/ExpressError.js");
+const {ListingSchema}=require("./schema.js");
 
 app.set("view engine" , "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -21,6 +22,18 @@ main().then(()=>console.log("MongoDB Successfully Connected...")).catch(error=>c
 async function main(){
     await mongoose.connect(MONGODB_URL);
 }
+
+const validateListing=(req, res, next)=>{
+ let {error}=ListingSchema.validate(req.body);
+ if(error) {
+    let errMsg= error.details.map ((element)=>element.message).join(",");
+    throw new ExpressError(404, errMsg);
+ }  
+ else{
+    next();
+ }
+}
+
 
 //checking..
 app.get("/", (req, res)=>{
@@ -70,11 +83,15 @@ app.get("/listings/new", (req, res)=>{
 //     }
 // }) 
 //or
-app.post("/listings", wrapAsync(async (req, res, next)=>{
+app.post("/listings", validateListing, wrapAsync(async (req, res, next)=>{
         let {title, description, price, image, location, country}= req.body;
-        if(!req.body){
-            throw new ExpressError(400, "Send valid data, ~BAD REQUEST!~")
-        }
+        // if(!req.body){
+        //     throw new ExpressError(400, "Send valid data, ~BAD REQUEST!~")
+        // }
+    //   let result=ListingSchema.validate(req.body);
+    //   if(result.error){
+    //     throw new ExpressError(400, result.error);
+    //   }
     let newListing= new Listing({
         title: title,
         description: description,
@@ -89,7 +106,7 @@ app.post("/listings", wrapAsync(async (req, res, next)=>{
 ));
 
 //see.ejs  : SHOW ROUTE (WE USE IT FOR EVERY CRUD's..)
-app.get("/listings/:id", wrapAsync(async(req, res)=>{
+app.get("/listings/:id", validateListing, wrapAsync(async(req, res)=>{
     let {id} = req.params;
     const listing= await Listing.findById(id);
     res.render("listings/see.ejs", {listing});
@@ -98,7 +115,7 @@ app.get("/listings/:id", wrapAsync(async(req, res)=>{
 
 // UPDATION
 // edit.ejs : Form to update things...
-app.get("/listings/:id/edit", wrapAsync(async(req, res)=>{
+app.get("/listings/:id/edit",  wrapAsync(async(req, res)=>{
     let {id}= req.params;
     let listing= await Listing.findById(id);
     res.render("listings/edit.ejs", {listing} );
