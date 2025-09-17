@@ -25,6 +25,11 @@ const listingSchema = new Schema({
   price: Number,
   location: String,
   country: String,
+  reviews:[
+{
+        type: Schema.Types.ObjectId, //Review diyeko harek object ko id yaha store garinxa.
+        ref:"Review"
+},  ]
 });
 
 const Listing = mongoose.model("Listing", listingSchema);
