@@ -30,17 +30,28 @@
     </div>
     <div class="details-actions">
       <p> Leave a review here</p> <br>
-      <form method="post" action="/listings/<%= listing._id %>/reviews">
+      <form method="post" action="/listings/<%= listing._id %>/reviews" novalidate class="needs-validation">
         <div>
           <label for="rating">Rating
             <input type="range" min="1" max="5" id="rating" name="review[rating]">
           </label>
         </div>
         <div>
-          <label for="comment">Commnets</label>
-          <textarea name="review[comment]" id="comment" cols="5" rows="5"></textarea>
+          <label for="comment">Comments</label>
+          <textarea name="review[comment]" id="comment"  cols="5" rows="5" required></textarea>
         </div>
         <button>Submit</button>
       </form>
+
+      <hr>
+      <h4>All reviews</h4>
+      <ul>
+        <%for(review of listing.reviews){%>
+          <li><%=review.comment%>, <%=review.rating%>stars</li>
+          <form action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE" method="post">
+            <button class="btn-delete"> Delete</button>
+          </form>
+        <%}%>
+        </ul>
     </div>
   </body>
