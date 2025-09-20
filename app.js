@@ -191,3 +191,8 @@ app.use((err, req, res, next)=>{
 app.listen(port, ()=>{
     console.log(`Server is running on port number ${port}..`);
 })
+
+
+//cookie parser: npm i cookie-parser
+//const cookie= require("cookie-parser")
+//app.use(cookie());
