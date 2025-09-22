@@ -17,9 +17,9 @@ const validateListing=(req, res, next)=>{
 }
 
 //checking..
-router.get("/", (req, res)=>{
-    res.redirect("/listings");
-})
+// router.get("/", (req, res)=>{
+//     res.redirect("/listings");
+// })
 // router.get("/testListing", async(req, res)=>{
 //     let sampleListing= new Listing({
 //         title: "My new villa",
@@ -82,6 +82,7 @@ router.post("/", validateListing, wrapAsync(async (req, res, next)=>{
         country: country
     });
   await newListing.save();
+  req.flash("success", "New listing created.")
   res.redirect("/listings");
 }
 ));
@@ -90,6 +91,10 @@ router.post("/", validateListing, wrapAsync(async (req, res, next)=>{
 router.get("/:id", wrapAsync(async(req, res)=>{
     let {id} = req.params;
     const listing= await Listing.findById(id).populate("reviews");
+    if(!listing){
+             req.flash("error", "Listing you requuested isnot available.");
+             res.redirect("/listings")
+            }
     res.render("listings/see.ejs", {listing});
 }));
 
@@ -99,6 +104,10 @@ router.get("/:id", wrapAsync(async(req, res)=>{
 router.get("/:id/edit",  wrapAsync(async(req, res)=>{
     let {id}= req.params;
     let listing= await Listing.findById(id);
+        if(!listing){
+             req.flash("error", "Listing you requuested isnot available.");
+             res.redirect("/listings")
+            }
     res.render("listings/edit.ejs", {listing} );
 }));
 //update
@@ -112,6 +121,7 @@ router.put("/:id", wrapAsync(async(req,res)=>{
 router.delete("/:id", wrapAsync(async(req, res)=>{
     let { id }= req.params;
     await Listing.findByIdAndDelete(id);
+    req.flash("success", "Deleted");
    res.redirect("/listings");
 }));
 
