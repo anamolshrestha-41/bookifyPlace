@@ -1,57 +1,89 @@
 <% layout("layout/boilerplate") %>
 
-  <body>
-    <div id="listing-details">
-      <div class="listing-card">
-        <% if (listing.image && listing.image.url) { %>
-          <img src="<%= listing.image.url %>" alt="<%= listing.title %>" class="details-img" />
-          <% } %>
-
-            <div class="details-body">
-              <h2 class="details-title">
-                <%= listing.title %>
-              </h2>
-              <p class="details-location">
-                <%= listing.location %>, <%= listing.country %>
-              </p>
-              <p class="details-desc">
-                <%= listing.description %>
-              </p>
-              <p class="details-price">NPR <%= listing.price.toLocaleString("en-NP") %> / night</p>
-
-              <div class="details-actions">
-                <a href="/listings/<%= listing._id %>/edit" class="btn-edit">Edit</a>
-                <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" class="delete-form">
-                  <button type="submit" class="btn-delete">Delete</button>
-                </form>
-              </div>
-            </div>
-      </div>
-    </div>
+<div class="details-container">
+  <% if (listing.image && listing.image.url) { %>
+    <img src="<%= listing.image.url %>" alt="<%= listing.title %>" class="details-img" />
+  <% } %>
+  
+  <div class="details-body">
+    <h2 class="details-title"><%= listing.title %></h2>
+    <p class="details-location"><%= listing.location %>, <%= listing.country %></p>
+    <p class="details-desc"><%= listing.description %></p>
+    <p class="details-price">₹<%= listing.price.toLocaleString("en-IN") %> per night</p>
+    
     <div class="details-actions">
-      <p> Leave a review here</p> <br>
-      <form method="post" action="/listings/<%= listing._id %>/reviews" novalidate class="needs-validation">
-        <div>
-          <label for="rating">Rating
-            <input type="range" min="1" max="5" id="rating" name="review[rating]">
-          </label>
-        </div>
-        <div>
-          <label for="comment">Comments</label>
-          <textarea name="review[comment]" id="comment"  cols="5" rows="5" required></textarea>
-        </div>
-        <button>Submit</button>
+      <a href="/listings/<%= listing._id %>/edit" class="btn-edit">Edit</a>
+      <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" style="display: inline;">
+        <button type="submit" class="btn-delete">Delete</button>
       </form>
-
-      <hr>
-      <h4>All reviews</h4>
-      <ul>
-        <%for(review of listing.reviews){%>
-          <li><%=review.comment%>, <%=review.rating%>stars</li>
-          <form action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE" method="post">
-            <button class="btn-delete"> Delete</button>
-          </form>
-        <%}%>
-        </ul>
     </div>
-  </body>
+  </div>
+</div>
+
+<div class="reviews-section">
+  <div class="reviews-header">
+    Reviews
+  </div>
+  
+  <div class="review-form">
+    <h4>Add a review</h4>
+    <form method="post" action="/listings/<%= listing._id %>/reviews">
+      <div class="rating-container">
+        <label for="rating">Rating:</label>
+        <input type="range" min="1" max="5" value="5" id="rating" name="review[rating]" class="rating-slider">
+        <span class="rating-display" id="ratingDisplay">5</span>
+      </div>
+      
+      <textarea 
+        name="review[comment]" 
+        id="comment" 
+        placeholder="Share your experience..." 
+        class="comment-input" 
+        required
+      ></textarea>
+      
+      <button type="submit" class="submit-review-btn">Post</button>
+    </form>
+  </div>
+  
+  <div class="reviews-list">
+    <% if (listing.reviews && listing.reviews.length > 0) { %>
+      <% for(let review of listing.reviews) { %>
+        <div class="review-item">
+          <div class="review-content">
+            <div class="review-rating">
+              <span class="stars">
+                <% for(let i = 1; i <= 5; i++) { %>
+                  <% if(i <= review.rating) { %>
+                    ★
+                  <% } else { %>
+                    ☆
+                  <% } %>
+                <% } %>
+              </span>
+            </div>
+            <div class="review-text"><%= review.comment %></div>
+          </div>
+          <div class="review-actions">
+            <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="post" style="display: inline;">
+              <button type="submit" class="delete-review-btn">Delete</button>
+            </form>
+          </div>
+        </div>
+      <% } %>
+    <% } else { %>
+      <div class="no-reviews">
+        No reviews yet. Be the first to share your experience!
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<script>
+  const ratingSlider = document.getElementById('rating');
+  const ratingDisplay = document.getElementById('ratingDisplay');
+  
+  ratingSlider.addEventListener('input', function() {
+    ratingDisplay.textContent = this.value;
+  });
+</script>

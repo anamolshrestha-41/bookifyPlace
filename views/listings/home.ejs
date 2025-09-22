@@ -1,21 +1,18 @@
 <% layout("./layout/boilerplate") %> 
-<body>
-  <div id="listings-page">
-    <h1 class="page-title">All Listings</h1>
 
-    <div class="listings-grid">
-      <% for(let list of allListings ) { %>
-        <div class="listing-card">
-          <img src="<%= list.image.url %>" class="listing-img" alt="listing image">
-          <div class="listing-body">
-            <h5 class="listing-title"><%= list.title %></h5>
-            <p class="listing-desc"><%= list.description %></p>
-            <p class="listing-price"><strong>Price:</strong> Rs<%= list.price.toLocaleString("en-NP") %> /night</p>
-            <p class="listing-location"><strong>Location:</strong> <%= list.location %>, <%= list.country %></p>
-            <a href="/listings/<%= list._id %>" class="btn-view">View Details</a>
-          </div>
-        </div>
-      <% } %>
+<h1 class="page-title">Discover Amazing Places</h1>
+
+<div class="listings-grid">
+  <% for(let list of allListings ) { %>
+    <div class="listing-card">
+      <img src="<%= list.image.url %>" class="listing-img" alt="<%= list.title %>">
+      <div class="listing-body">
+        <h5 class="listing-title"><%= list.title %></h5>
+        <p class="listing-desc"><%= list.description %></p>
+        <div class="listing-price">₹<%= list.price.toLocaleString("en-IN") %> per night</div>
+        <div class="listing-location"><%= list.location %>, <%= list.country %></div>
+        <a href="/listings/<%= list._id %>" class="btn-view">View Details</a>
+      </div>
     </div>
-  </div>
-</body>
+  <% } %>
+</div>
