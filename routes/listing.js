@@ -42,6 +42,10 @@ router.get("/", wrapAsync(async(req, res)=>{
 //CREATE
 //new.ejs: Form to create things...
 router.get("/new", (req, res)=>{
+    if(!req.isAuthenticated()){
+        req.flash("error", "you must be logged-in");
+        res.redirect("/login");
+    }
     res.render("listings/new.ejs");
 })
 //POST creation!

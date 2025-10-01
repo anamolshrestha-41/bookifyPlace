@@ -1,0 +1,25 @@
+<% layout("layout/boilerplate") %>
+<h1>LogIn!!</h1>
+<div class="row mt-3">
+    <div class="col-6 offset-3">
+
+         <form action="/login" method="POST">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input id="username" type="text" name="username" placeholder="Give your place a name" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="example@exivox.com" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" placeholder="Your password" class="form-input">
+    </div>
+    <button type="submit" class="btn-submit">Login</button>
+    </form>
+
+    </div>
+</div>
