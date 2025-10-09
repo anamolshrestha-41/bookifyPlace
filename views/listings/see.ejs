@@ -1,89 +1,105 @@
 <% layout("layout/boilerplate") %>
 
 <div class="details-container">
-  <% if (listing.image && listing.image.url) { %>
-    <img src="<%= listing.image.url %>" alt="<%= listing.title %>" class="details-img" />
-  <% } %>
-  
+  <div class="details-image">
+    <% if (listing.image && listing.image.url) { %>
+      <img src="<%= listing.image.url %>" alt="<%= listing.title %>" class="details-img" />
+    <% } else { %>
+      <img src="/images/default-listing.jpg" alt="No image available" class="details-img" />
+    <% } %>
+  </div>
+
   <div class="details-body">
     <h2 class="details-title"><%= listing.title %></h2>
     <p class="details-location"><%= listing.location %>, <%= listing.country %></p>
+    <strong>Hosted by: <%= listing.owner.username %></strong>
     <p class="details-desc"><%= listing.description %></p>
-    <p class="details-price">₹<%= listing.price.toLocaleString("en-IN") %> per night</p>
-    
-    <div class="details-actions">
-      <a href="/listings/<%= listing._id %>/edit" class="btn-edit">Edit</a>
-      <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" style="display: inline;">
-        <button type="submit" class="btn-delete">Delete</button>
-      </form>
-    </div>
-  </div>
-</div>
+    <p class="details-price">₹<%= Number(listing.price).toLocaleString("en-IN") %> per night</p>
 
-<div class="reviews-section">
-  <div class="reviews-header">
-    Reviews
-  </div>
-  
-  <div class="review-form">
-    <h4>Add a review</h4>
-    <form method="post" action="/listings/<%= listing._id %>/reviews">
-      <div class="rating-container">
-        <label for="rating">Rating:</label>
-        <input type="range" min="1" max="5" value="5" id="rating" name="review[rating]" class="rating-slider">
-        <span class="rating-display" id="ratingDisplay">5</span>
-      </div>
-      
-      <textarea 
-        name="review[comment]" 
-        id="comment" 
-        placeholder="Share your experience..." 
-        class="comment-input" 
-        required
-      ></textarea>
-      
-      <button type="submit" class="submit-review-btn">Post</button>
-    </form>
-  </div>
-  
-  <div class="reviews-list">
-    <% if (listing.reviews && listing.reviews.length > 0) { %>
-      <% for(let review of listing.reviews) { %>
-        <div class="review-item">
-          <div class="review-content">
-            <div class="review-rating">
-              <span class="stars">
-                <% for(let i = 1; i <= 5; i++) { %>
-                  <% if(i <= review.rating) { %>
-                    ★
-                  <% } else { %>
-                    ☆
-                  <% } %>
-                <% } %>
-              </span>
-            </div>
-            <div class="review-text"><%= review.comment %></div>
-          </div>
-          <div class="review-actions">
-            <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="post" style="display: inline;">
-              <button type="submit" class="delete-review-btn">Delete</button>
-            </form>
-          </div>
-        </div>
-      <% } %>
-    <% } else { %>
-      <div class="no-reviews">
-        No reviews yet. Be the first to share your experience!
+    <% if (currentUser && currentUser._id.toString() === listing.owner._id.toString()) { %>
+      <div class="details-actions">
+        <a href="/listings/<%= listing._id %>/edit" class="btn-edit">Edit</a>
+        <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" class="inline-form">
+          <button type="submit" class="btn-delete">Delete</button>
+        </form>
       </div>
     <% } %>
   </div>
 </div>
 
-<script>
+<div class="reviews-section">
+  <h3 class="reviews-header">Reviews</h3>
+
+  <% if (currentUser) { %>
+    <div class="review-form">
+      <h4>Add a review</h4>
+      <form method="POST" action="/listings/<%= listing._id %>/reviews">
+        <fieldset class="starability-slot">
+          <legend>Rating</legend>
+          <input type="radio" id="rate1" name="review[rating]" value="1" />
+          <label for="rate1" title="Terrible">1 star</label>
+
+          <input type="radio" id="rate2" name="review[rating]" value="2" />
+          <label for="rate2" title="Not good">2 stars</label>
+
+          <input type="radio" id="rate3" name="review[rating]" value="3" />
+          <label for="rate3" title="Average">3 stars</label>
+
+          <input type="radio" id="rate4" name="review[rating]" value="4" />
+          <label for="rate4" title="Very good">4 stars</label>
+
+          <input type="radio" id="rate5" name="review[rating]" value="5" />
+          <label for="rate5" title="Amazing">5 stars</label>
+        </fieldset>
+
+        <textarea
+          name="review[comment]"
+          id="comment"
+          placeholder="Share your experience..."
+          class="comment-input"
+          required
+        ></textarea>
+
+        <button type="submit" class="submit-review-btn">Post</button>
+      </form>
+    </div>
+  <% } else { %>
+    <p class="login-reminder">Please <a href="/login">log in</a> to leave a review.</p>
+  <% } %>
+
+  <div class="reviews-list">
+    <% if (listing.reviews && listing.reviews.length > 0) { %>
+      <% for (let review of listing.reviews) { %>
+        <div class="review-item">
+          <div class="review-content">
+            <div class="review-rating">
+              <div class="starability-result" data-rating="<%= review.rating %>"></div>
+            </div>
+            <div class="reviews-person">@<%= review.author.username %></div>
+            <div class="review-text"><%= review.comment %></div>
+          </div>
+
+          <% if (currentUser && currentUser._id.toString() === review.author._id.toString()) { %>
+            <div class="review-actions">
+              <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="inline-form">
+                <button type="submit" class="delete-review-btn">Delete</button>
+              </form>
+            </div>
+          <% } %>
+        </div>
+      <% } %>
+    <% } else { %>
+      <div class="no-reviews">No reviews yet. Be the first to share your experience!</div>
+    <% } %>
+  </div>
+</div>
+
+
+  <!-- <script>
   const ratingSlider = document.getElementById('rating');
   const ratingDisplay = document.getElementById('ratingDisplay');
   
   ratingSlider.addEventListener('input', function() {
     ratingDisplay.textContent = this.value;
   });
-</script>
+</script> -->
