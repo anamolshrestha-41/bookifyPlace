@@ -10,7 +10,10 @@ module.exports.renderNewForm=(req, res)=>{
 };
 
 module.exports.createRoute=async (req, res, next)=>{
-        let {title, description, price, image, location, country}= req.body;
+    let {title, description, price, image, location, country}= req.body;
+    let url= req.file.path;
+    let filename= req.file.filename;
+
         // if(!req.body){
         //     throw new ExpressError(400, "Send valid data, ~BAD REQUEST!~")
         // }
@@ -27,6 +30,7 @@ module.exports.createRoute=async (req, res, next)=>{
         country: country
     });
     newListing.owner= req.user._id;
+    newListing.image={url, filename};
   await newListing.save();
   req.flash("success", "New listing created.")
   res.redirect("/listings");
