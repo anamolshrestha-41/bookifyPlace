@@ -8,7 +8,8 @@ const app = express();
 const port= 8080;
 const path= require("path");
 const mongoose= require("mongoose");
-const MONGODB_URL= "mongodb://127.0.0.1:27017/wanderlust";
+// const MONGODB_URL= "mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl= process.env.ATLASH_URL;
 // const Listing= require("./models/listing.js")
 const methodOverride= require("method-override");
 const ejsMate= require("ejs-mate");
@@ -17,6 +18,9 @@ const ExpressError=require("./utils/ExpressError.js");
 // const {ListingSchema, reviewSchema}=require("./schema.js");
 // const Review= require("./models/review.js")
 const session= require("express-session");
+
+const MongoStore= require("connect-mongo");
+
 const flash= require("connect-flash");
 const passport = require("passport");
 const LocalStrategy= require("passport-local");
@@ -37,7 +41,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 main().then(()=>console.log("MongoDB Successfully Connected...")).catch(error=>console.log(error));
 async function main(){
-    await mongoose.connect(MONGODB_URL);
+    await mongoose.connect(dbUrl);
 }
 
 
@@ -65,8 +69,19 @@ async function main(){
 //  }
 // }
 
+const store=MongoStore.create({
+    mongoUrl: dbUrl,
+    crypto:{
+        // secret: 'SecretKey from env'
+        secret: process.env.SESSION_SECRET,
+    },
+    touchAfter: 24*3600
+})
+
 const sessionOptions={
-    secret: "developmentPhase",
+    store,
+    // secret: "developmentPhase",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie:{
